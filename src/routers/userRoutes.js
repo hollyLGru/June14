@@ -1,9 +1,13 @@
 let express = require("express");
+// brings in express 
 
 let route = new express.Router();
+// makes a new route 
 
-let controller = require("../controllers/usercontrollers");
+let controller = require("../controllers/userscontroller");
 
-route.post("/register", )
+route.post("/register", controller.register);
 
-module.export = route;
+route.post("/login", controller.login);
+
+module.exports = route;
