@@ -1,8 +1,8 @@
-
-let db = require("../model/db")
-
+let db = require("../model/db");
 let argon = require("argon2");
-
+// codes the passwordhash
+let jwt = require("jsonwebtoken");
+// to make jsonwebtoken
 
 // this code above is how a user creates an account 
 let register = async function(req, res){ // REMEMBER ASYNC BCUZ WE USE ARGON
@@ -13,7 +13,7 @@ let register = async function(req, res){ // REMEMBER ASYNC BCUZ WE USE ARGON
     let email = req.body.email;
     let password = req.body.password;
 
-    let pwHash = await argon.hash("password"); // remember AWAIT bcuz ARGON 
+    let pwHash = await argon.hash(password); // remember AWAIT bcuz ARGON 
     let params = [email, pwHash];
 
     db.query(sql, params, function(err, results){
@@ -27,7 +27,6 @@ let register = async function(req, res){ // REMEMBER ASYNC BCUZ WE USE ARGON
 
 };
 
-
 // this will take in a username or email && a password.
 // It will return a JSON WEB TOKEN (JWT)
 // JTW can be used in subsequent requests to prove that the user is authenticated 
@@ -36,12 +35,12 @@ let login = async function(req, res){
     let email = req.body.email;
     let password = req.body.password;
 
-    let sql = "select pw_hash from usersjune14 where email = ?"
+    let sql = "select id, pw_hash from usersjune14 where email = ?" ;
     let params = [email];
 
     db.query(sql, params, async function(err, results){
         if(err){
-            console.log("couldnt log in ", err);
+            console.log("couldnt log in ");
             res.sendStatus(500);
             return; // use return so you dont need to write and else statement 
         };
@@ -53,6 +52,7 @@ let login = async function(req, res){
         }; // there is an error because there is more than one of this email in our database 
 
         if(results.length == 0){
+            console.log("testtesttesttest")
             res.sendStatus(400);
             return;
         }; // if there isnt a result for this email, that means that email login wasnt created
@@ -61,10 +61,15 @@ let login = async function(req, res){
         let goodPassword = await argon.verify(hash, password);
             // code above is directly from ARGON2 documentation!!!
         let token = {
-            "email": email
+            "email": email,
+
+            "message": "hey girl hey"
+
         };
+
         if(goodPassword){
-            res.json(token);
+            let signedToken = jwt.sign(token, process.env.JWT_SECRET)
+            res.send(signedToken);
             //if the password is good or the correct password, then we will respond with this token
         } else {
             console.log("???????")
@@ -78,4 +83,4 @@ let login = async function(req, res){
 module.exports = {
     register,
     login
-} ;
+};

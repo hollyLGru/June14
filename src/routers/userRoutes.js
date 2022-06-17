@@ -6,6 +6,8 @@ let route = new express.Router();
 
 let controller = require("../controllers/userscontroller");
 
+
+
 route.post("/register", controller.register);
 
 route.post("/login", controller.login);

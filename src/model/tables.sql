@@ -13,6 +13,9 @@ CREATE TABLE usersjune14 (
 insert into users(email, pw_hash) values (?, ?)
 -- when a user registers this is what needs to happen
 
+select pw_hash from usersjune14 where email = ?
+--gets hash from the database when we know the user/email
+
 -- get the summary of all items
 select id, task, is_done from todos;
 
