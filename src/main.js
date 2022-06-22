@@ -5,6 +5,10 @@ let PORT = process.env.PORT || 8000;
 let app = express();
 app.use(bodyparser.json());
 
+app.get ("/hello", function(req, res){
+    let name = req.query.name;
+    res.send("hey there!")
+});
 
 let todosRoutes = require("./routers/todosrouter");
 let userRoutes = require("./routers/userRoutes");
